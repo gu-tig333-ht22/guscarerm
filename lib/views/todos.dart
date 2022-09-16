@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:template/constants.dart';
+import 'package:template/data/todos.dart';
 import 'package:template/views/create_todo.dart';
 
 class TodosView extends StatelessWidget {
@@ -11,23 +13,16 @@ class TodosView extends StatelessWidget {
       appBar: AppBar(
         title: const Text(appTitle),
         centerTitle: true,
-        actions: <Widget>[_filterMenu()],
+        actions: const <Widget>[FilterMenu()],
       ),
-      body: ListView(children: <Widget>[
-        // Placeholder items
-        _todoItem(context, "test1", false),
-        _todoItem(context, "test2", true),
-        _todoItem(context, "test1", false),
-        _todoItem(context, "test2", true),
-        _todoItem(context, "test1", false),
-        _todoItem(context, "test2", true),
-        _todoItem(context, "test1", false),
-        _todoItem(context, "test2", true),
-        _todoItem(context, "test1", false),
-        _todoItem(context, "test2", true),
-        _todoItem(context, "test1", false),
-        _todoItem(context, "test2", true),
-      ]),
+      body: Consumer<Todos>(builder: (context, todos, widget) {
+        List<Todo> filteredTodos = _filterList(todos.todos, todos.filteredBy);
+        return ListView.builder(
+          itemCount: filteredTodos.length,
+          itemBuilder: (context, index) =>
+              TodoItem(index, filteredTodos[index]),
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.push(context,
             MaterialPageRoute(builder: (context) => const CreateTodoView())),
@@ -36,7 +31,23 @@ class TodosView extends StatelessWidget {
     );
   }
 
-  Widget _filterMenu() {
+  List<Todo> _filterList(List<Todo> todos, String filterBy) {
+    switch (filterBy) {
+      case 'done':
+        return todos.where((element) => (element.done == true)).toList();
+      case 'undone':
+        return todos.where((element) => (element.done == false)).toList();
+      default:
+        return todos;
+    }
+  }
+}
+
+class FilterMenu extends StatelessWidget {
+  const FilterMenu({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return PopupMenuButton(
       itemBuilder: (BuildContext context) => ['all', 'done', 'undone']
           .map((entry) => PopupMenuItem(
@@ -45,43 +56,51 @@ class TodosView extends StatelessWidget {
               ))
           .toList(),
       onSelected: (String value) {
-        print(value);
+        Provider.of<Todos>(context, listen: false).filteredBy = value;
       },
     );
   }
+}
 
-  Widget _todoItem(BuildContext context, String name, bool done) {
+class TodoItem extends StatelessWidget {
+  final int index;
+  final Todo todo;
+
+  const TodoItem(this.index, this.todo, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-          border: Border(
-              bottom:
-                  BorderSide(width: 1, color: Theme.of(context).primaryColor))),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Row(
-          children: <Widget>[
-            Checkbox(
-                value: done,
-                onChanged: (bool? value) {
-                  print(value);
-                }),
-            Text(
-              name,
-              style: TextStyle(
-                  decoration: done ? TextDecoration.lineThrough : null),
+        padding: const EdgeInsets.all(10.0),
+        decoration: BoxDecoration(
+            border: Border(
+                bottom: BorderSide(
+                    width: 1, color: Theme.of(context).dividerColor))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: <Widget>[
+                Checkbox(
+                    value: todo.done,
+                    onChanged: (bool? value) {
+                      Provider.of<Todos>(context, listen: false)
+                          .toggleDone(index);
+                    }),
+                Text(
+                  todo.name,
+                  style: TextStyle(
+                      decoration:
+                          todo.done ? TextDecoration.lineThrough : null),
+                ),
+              ],
             ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
             IconButton(
                 onPressed: (() {
-                  print('delete');
+                  Provider.of<Todos>(context, listen: false).removeTodo(index);
                 }),
                 icon: const Icon(Icons.close))
           ],
-        )
-      ]),
-    );
+        ));
   }
 }
