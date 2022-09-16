@@ -8,7 +8,7 @@ class CreateTodoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textController = TextEditingController();
+    final TextEditingController textController = TextEditingController();
 
     return Scaffold(
         appBar: AppBar(
@@ -17,7 +17,7 @@ class CreateTodoView extends StatelessWidget {
         ),
         body: Container(
             padding: const EdgeInsets.all(20.0),
-            child: Column(children: <Widget>[
+            child: Column(children: [
               TextField(
                 controller: textController,
                 decoration: const InputDecoration(
