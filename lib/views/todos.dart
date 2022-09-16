@@ -13,25 +13,25 @@ class TodosView extends StatelessWidget {
         centerTitle: true,
         actions: <Widget>[_filterMenu()],
       ),
-      body: Stack(
-        children: [
-          ListView(children: <Widget>[
-            // Placeholder items
-            _todoItem(context, "test1", false),
-            _todoItem(context, "test2", true),
-            _todoItem(context, "test1", false),
-            _todoItem(context, "test2", true),
-            _todoItem(context, "test1", false),
-            _todoItem(context, "test2", true),
-            _todoItem(context, "test1", false),
-            _todoItem(context, "test2", true),
-            _todoItem(context, "test1", false),
-            _todoItem(context, "test2", true),
-            _todoItem(context, "test1", false),
-            _todoItem(context, "test2", true),
-          ]),
-          _createItem(context)
-        ],
+      body: ListView(children: <Widget>[
+        // Placeholder items
+        _todoItem(context, "test1", false),
+        _todoItem(context, "test2", true),
+        _todoItem(context, "test1", false),
+        _todoItem(context, "test2", true),
+        _todoItem(context, "test1", false),
+        _todoItem(context, "test2", true),
+        _todoItem(context, "test1", false),
+        _todoItem(context, "test2", true),
+        _todoItem(context, "test1", false),
+        _todoItem(context, "test2", true),
+        _todoItem(context, "test1", false),
+        _todoItem(context, "test2", true),
+      ]),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const CreateTodoView())),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -83,24 +83,5 @@ class TodosView extends StatelessWidget {
         )
       ]),
     );
-  }
-
-  Widget _createItem(BuildContext context) {
-    return Positioned(
-        bottom: 5,
-        right: 5,
-        child: IconButton(
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const CreateTodoView()));
-          },
-          iconSize: 80,
-          icon: Icon(
-            Icons.add_circle,
-            color: Theme.of(context).primaryColor,
-          ),
-        ));
   }
 }
