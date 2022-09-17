@@ -25,10 +25,10 @@ class TodoItem extends StatelessWidget {
                     value: todo.done,
                     onChanged: (bool? value) {
                       Provider.of<Todos>(context, listen: false)
-                          .toggleDone(index);
+                          .updateTodo(index, done: value ?? false);
                     }),
                 Text(
-                  todo.name,
+                  todo.title,
                   style: TextStyle(
                       decoration:
                           todo.done ? TextDecoration.lineThrough : null),
@@ -37,7 +37,7 @@ class TodoItem extends StatelessWidget {
             ),
             IconButton(
                 onPressed: (() {
-                  Provider.of<Todos>(context, listen: false).removeTodo(index);
+                  Provider.of<Todos>(context, listen: false).deleteTodo(index);
                 }),
                 icon: const Icon(Icons.close))
           ],

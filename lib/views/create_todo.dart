@@ -27,7 +27,7 @@ class CreateTodoView extends StatelessWidget {
               TextButton.icon(
                   onPressed: (() {
                     Provider.of<Todos>(context, listen: false)
-                        .addTodo(Todo(name: textController.text, done: false));
+                        .createTodo(textController.text);
                     Navigator.pop(context);
                   }),
                   icon: const Icon(Icons.add),
