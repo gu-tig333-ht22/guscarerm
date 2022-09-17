@@ -28,7 +28,7 @@ class Api {
   static Future<void> updateTodo(String id, Todo todo) async {
     await http.put(Uri.https(apiHost, 'todos/$id', {'key': apiKey}),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
-        body: jsonEncode({'title': todo.title, 'done': todo.done}));
+        body: jsonEncode(todo.toJson()));
   }
 }
 
@@ -45,6 +45,13 @@ class Todo {
       title: json['title'],
       done: json['done'] as bool,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'done': done,
+    };
   }
 }
 
