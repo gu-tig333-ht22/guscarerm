@@ -25,8 +25,8 @@ class Api {
     await http.delete(Uri.https(apiHost, 'todos/$id', {'key': apiKey}));
   }
 
-  static Future<void> updateTodo(String id, Todo todo) async {
-    await http.put(Uri.https(apiHost, 'todos/$id', {'key': apiKey}),
+  static Future<void> updateTodo(Todo todo) async {
+    await http.put(Uri.https(apiHost, 'todos/${todo.id}', {'key': apiKey}),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode(todo.toJson()));
   }
@@ -49,6 +49,7 @@ class Todo {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
       'done': done,
     };
@@ -81,17 +82,16 @@ class Todos extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteTodo(int index) async {
-    Api.deleteTodo(_todos[index].id);
-    _todos.removeAt(index);
+  void deleteTodo(String id) async {
+    Api.deleteTodo(id);
+    _todos.removeWhere((item) => (item.id == id));
     notifyListeners();
   }
 
-  void updateTodo(int index, {required bool done}) async {
-    Todo updatedTodo =
-        Todo(id: _todos[index].id, title: _todos[index].title, done: done);
-    Api.updateTodo(updatedTodo.id, updatedTodo);
-    _todos[index] = updatedTodo;
+  void updateTodo(Todo todo) async {
+    Api.updateTodo(todo);
+    int index = _todos.indexWhere((item) => (item.id == todo.id));
+    _todos[index] = todo;
     notifyListeners();
   }
 }
