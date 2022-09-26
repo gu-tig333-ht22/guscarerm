@@ -23,15 +23,18 @@ class CreateTodoView extends StatelessWidget {
                 decoration: const InputDecoration(
                     hintText: 'What are you going to do?',
                     border: OutlineInputBorder()),
+                autofocus: true,
+                onSubmitted: (value) => submitTodo(context, value),
               ),
               TextButton.icon(
-                  onPressed: (() {
-                    Provider.of<Todos>(context, listen: false)
-                        .addTodo(Todo(name: textController.text, done: false));
-                    Navigator.pop(context);
-                  }),
+                  onPressed: () => submitTodo(context, textController.text),
                   icon: const Icon(Icons.add),
                   label: const Text('ADD')),
             ])));
+  }
+
+  void submitTodo(BuildContext context, String value) {
+    Provider.of<Todos>(context, listen: false).createTodo(value);
+    Navigator.pop(context);
   }
 }
